@@ -13,16 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bookings', function (Blueprint $table) {
+        Schema::create('room_booking', function (Blueprint $table) {
             $table->id();
-            $table->text('name');
-            $table->string('email')->unique();
-            $table->integer('phone_No')->unique();
-            $table->text('address');
-            $table->date('check_in_date');
-            $table->date('check_out_date');
-            $table->date('booking_date');
-            $table->boolean('payment_status')->default(false);
+            $table->integer('number_of_rooms');
+            $table->unsignedBigInteger('booking_id');
+            $table->unsignedBigInteger('room_id');
+            $table->foreign('booking_id')->references('id')->on('bookings');
+            $table->foreign('room_id')->references('id')->on('rooms');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -35,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('room_bookings');
     }
 };

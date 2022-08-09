@@ -120,6 +120,10 @@ return [
     | will not be safe. Please do this before deploying an application!
     |
     */
+    'lang' => [
+        'English' => 'en',
+        'Arabic' => 'ar',
+    ],
 
     'key' => env('APP_KEY'),
 

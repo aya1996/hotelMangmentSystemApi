@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
-class Booking extends Model
+class RoomType extends Model
 {
     use HasFactory, HasTranslations;
 
@@ -15,15 +15,16 @@ class Booking extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'address', 'phone_No', 'check_in_date', 'check_out_date', 'booking_date', 'payment_status'];
+    protected $fillable = ['name'];
+
     /**
-     * The attributes that are mass translatable.
+     * The attributes that are mass assignable.
      *
      * @var array
      */
-    public $translatable = ['name', 'address'];
+    public $translatable = ['name'];
 
-    
+   
 
-    
+
 }

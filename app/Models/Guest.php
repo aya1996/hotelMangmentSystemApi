@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Translatable\HasTranslations;
 
-class Booking extends Model
+class Guest extends Model
 {
     use HasFactory, HasTranslations;
 
@@ -15,7 +16,9 @@ class Booking extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'address', 'phone_No', 'check_in_date', 'check_out_date', 'booking_date', 'payment_status'];
+
+    protected $fillable = ['name', 'email', 'phone_No', 'address', 'room_id'];
+
     /**
      * The attributes that are mass translatable.
      *
@@ -23,7 +26,13 @@ class Booking extends Model
      */
     public $translatable = ['name', 'address'];
 
-    
-
-    
+    /**
+     * Get the room that owns the guest.
+     *
+     * @return BelongsTo
+     */
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(Room::class);
+    }
 }
