@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RoomTypeResource;
+use App\Models\RoomType;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-class Room extends Controller
+class RoomTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +17,7 @@ class Room extends Controller
      */
     public function index()
     {
-        //
+        return $this->handleResponse(RoomTypeResource::collection(RoomType::all()), 'List of facilities');
     }
 
     /**
@@ -25,7 +28,10 @@ class Room extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $roomType = RoomType::create($request->all());
+        $roomType->save();
+        return $this->handleResponse(new RoomTypeResource($roomType), Response::HTTP_CREATED);
     }
 
     /**
@@ -36,7 +42,7 @@ class Room extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->handleResponse(new RoomTypeResource(RoomType::find($id)), 'Facility');
     }
 
     /**
@@ -48,7 +54,10 @@ class Room extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $roomType = RoomType::find($id);
+        $roomType->update($request->all());
+        $roomType->save();
+        return $this->handleResponse(new RoomTypeResource($roomType), Response::HTTP_OK);
     }
 
     /**
@@ -59,6 +68,9 @@ class Room extends Controller
      */
     public function destroy($id)
     {
-        //
+        $roomType = RoomType::find($id);
+        $roomType->delete();
+
+        return $this->handleResponse(true, Response::HTTP_OK);
     }
 }

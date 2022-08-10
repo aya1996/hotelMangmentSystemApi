@@ -3,7 +3,13 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -14,7 +20,6 @@ class AdminController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
@@ -23,11 +28,33 @@ class AdminController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+    public function login(Request $request)
     {
-        //
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (!Auth::attempt($request->only('email', 'password'))) {
+                return $this->handleError('Invalid credentials');
+            }
+
+            $user = User::where('email', $request['email'])->firstOrFail();
+
+
+            return $this->handleResponse(new UserResource($user), 'Login Successful');
+        }
     }
 
+    public function register(Request $request, UserRequest $attr)
+    {
+
+        $user = User::create([
+            'name'      => $attr['name'],
+            'email'     => $attr['email'],
+            'password'  => Hash::make($attr['password']),
+        ]);
+        $token = $user->createToken('Laravel Password Grant Client')->plainTextToken;
+
+        return $this->handleResponse(new UserResource($user), 'user created successfully', Response::HTTP_CREATED);
+    }
     /**
      * Display the specified resource.
      *
@@ -59,6 +86,13 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
     }
 }

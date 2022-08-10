@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FacilityResource;
+use App\Models\Facility;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-class Booking extends Controller
+class FacilityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +17,7 @@ class Booking extends Controller
      */
     public function index()
     {
-        //
+        return $this->handleResponse(FacilityResource::collection(Facility::all()), 'List of facilities');
     }
 
     /**
@@ -25,7 +28,9 @@ class Booking extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $facility = Facility::create($request->all());
+        $facility->save();
+        return $this->handleResponse(new FacilityResource($facility), Response::HTTP_CREATED);
     }
 
     /**
@@ -36,7 +41,7 @@ class Booking extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->handleResponse(new FacilityResource(Facility::find($id)), 'Facility');
     }
 
     /**
@@ -48,7 +53,10 @@ class Booking extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $facility = Facility::find($id);
+        $facility->update($request->all());
+        $facility->save();
+        return $this->handleResponse(new FacilityResource($facility), Response::HTTP_OK);
     }
 
     /**
@@ -59,6 +67,8 @@ class Booking extends Controller
      */
     public function destroy($id)
     {
-        //
+        $facility = Facility::find($id);
+        $facility->delete();
+        return $this->handleResponse(true, Response::HTTP_OK);
     }
 }
