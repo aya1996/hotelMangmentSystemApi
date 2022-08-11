@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Booking;
 use App\Models\Room;
@@ -11,6 +12,7 @@ use Illuminate\Http\Response;
 
 class BookingController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -27,16 +29,33 @@ class BookingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookingRequest $request)
     {
-        $booking = Booking::create($request->all());
-        if(Room::find($request->room_id)->available_rooms < $request->no_of_rooms) {
-            return $this->handleResponse(null, 'Not enough rooms available', Response::HTTP_BAD_REQUEST);
+
+        foreach (Room::find($request->room_id) as $room) {
+            if (!$room) {
+                return $this->handleError(null, 'Room not found', Response::HTTP_NOT_FOUND);
+            }
+            if ($room->check_in_date > $request->check_in_date || $room->check_out_date < $request->check_out_date) {
+                return $this->handleError(null, 'Room not available in these dates', Response::HTTP_NOT_FOUND);
+            }
+
+            if ($room->availability == 0) {
+                return $this->handleError(null, 'this room is not available', Response::HTTP_BAD_REQUEST);
+            } else {
+                $rooms[] = $room;
+                $booking = Booking::create($request->all());
+                $booking->save();
+                $booking->rooms()->attach($request->room_id);
+                Room::where('id', $room->id)->update(['availability' => 0]);
+            }
         }
-        Room::find($request->room_id)->decrement('available_rooms', $request->no_of_rooms);
-        
-        $booking->save();
-        return $this->handleResponse(new BookingResource($booking), Response::HTTP_CREATED);
+    
+   
+           
+
+
+        return $this->handleResponse(new BookingResource($booking), 'Your booking is successfully created', Response::HTTP_CREATED);
     }
 
     /**

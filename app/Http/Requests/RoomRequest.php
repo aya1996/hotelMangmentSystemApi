@@ -26,7 +26,8 @@ class RoomRequest extends FormRequest
         return [
 
             'room_No'  => 'required|numeric|max:255',
-            'price' => 'required|numeric|max:255',
+            'price_per_day' => 'required|numeric|max:255',
+            'price_per_hour' => 'required|numeric|max:255',
             'capacity' => 'required|numeric|max:255',
             'availability' => 'required|boolean|between:0,1',
             'phone_No' => 'required|numeric',

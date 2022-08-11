@@ -17,7 +17,7 @@ class RoomTypeController extends Controller
      */
     public function index()
     {
-        return $this->handleResponse(RoomTypeResource::collection(RoomType::all()), 'List of facilities');
+        return $this->handleResponse(RoomTypeResource::collection(RoomType::all()), trans('response.roomTypes_retrieved_successfully'));
     }
 
     /**
@@ -31,7 +31,7 @@ class RoomTypeController extends Controller
 
         $roomType = RoomType::create($request->all());
         $roomType->save();
-        return $this->handleResponse(new RoomTypeResource($roomType), Response::HTTP_CREATED);
+        return $this->handleResponse(new RoomTypeResource($roomType), trans('response.roomType_created_successfully'), Response::HTTP_CREATED);
     }
 
     /**
@@ -42,7 +42,7 @@ class RoomTypeController extends Controller
      */
     public function show($id)
     {
-        return $this->handleResponse(new RoomTypeResource(RoomType::find($id)), 'Facility');
+        return $this->handleResponse(new RoomTypeResource(RoomType::find($id)), trans('response.roomType_retrieved_successfully'));
     }
 
     /**
@@ -57,7 +57,7 @@ class RoomTypeController extends Controller
         $roomType = RoomType::find($id);
         $roomType->update($request->all());
         $roomType->save();
-        return $this->handleResponse(new RoomTypeResource($roomType), Response::HTTP_OK);
+        return $this->handleResponse(new RoomTypeResource($roomType), trans('response.roomType_updated_successfully'), Response::HTTP_OK);
     }
 
     /**
@@ -71,6 +71,6 @@ class RoomTypeController extends Controller
         $roomType = RoomType::find($id);
         $roomType->delete();
 
-        return $this->handleResponse(true, Response::HTTP_OK);
+        return $this->handleResponse(true, trans('response.roomType_deleted_successfully'), Response::HTTP_OK);
     }
 }

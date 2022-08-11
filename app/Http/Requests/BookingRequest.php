@@ -25,15 +25,18 @@ class BookingRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:bookings',
-            'phone_No' => 'required|integer|unique:bookings',
+            'email' => 'required|string|email|max:255',
+            'phone_No' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'check_in_date' => 'required|date',
             'check_out_date' => 'required|date',
             'booking_date' => 'required|date',
             'payment_status' => 'required|boolean|between:0,1',
-    
-    
+            'room_id' => 'required|array',
+            'room_id.*' => 'required|integer|exists:rooms,id',
+
+
+
         ];
     }
 }

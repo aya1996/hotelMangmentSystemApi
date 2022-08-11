@@ -30,7 +30,7 @@ class FacilityController extends Controller
     {
         $facility = Facility::create($request->all());
         $facility->save();
-        return $this->handleResponse(new FacilityResource($facility), Response::HTTP_CREATED);
+        return $this->handleResponse(new FacilityResource($facility), trans('response.facility_created_successfully'), Response::HTTP_CREATED);
     }
 
     /**
@@ -56,7 +56,7 @@ class FacilityController extends Controller
         $facility = Facility::find($id);
         $facility->update($request->all());
         $facility->save();
-        return $this->handleResponse(new FacilityResource($facility), Response::HTTP_OK);
+        return $this->handleResponse(new FacilityResource($facility), trans('response.facility_updated_successfully'), Response::HTTP_OK);
     }
 
     /**
@@ -69,6 +69,6 @@ class FacilityController extends Controller
     {
         $facility = Facility::find($id);
         $facility->delete();
-        return $this->handleResponse(true, Response::HTTP_OK);
+        return $this->handleResponse(true,trans('response.facility_deleted_successfully'), Response::HTTP_OK);
     }
 }

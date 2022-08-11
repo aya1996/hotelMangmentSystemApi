@@ -16,10 +16,11 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->integer('room_No')->unique();
-            $table->float('price');
+            $table->float('price_per_day');
+            $table->float('price_per_hour');
             $table->integer('capacity');
             $table->boolean('availability')->default(true);
-            $table->integer('phone_No');
+            $table->text('phone_No');
             $table->unsignedBigInteger('room_type_id');
             $table->foreign('room_type_id')->references('id')->on('room_types');
             $table->softDeletes();

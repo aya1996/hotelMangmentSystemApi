@@ -64,4 +64,24 @@ class Room extends Model
     {
         return $this->hasMany(Image::class);
     }
+
+    /**
+     * Get the room bookings that owns the room.
+     *
+     * @return hasMany
+     */
+    public function roomBookings(): HasMany
+    {
+        return $this->hasMany(RoomBooking::class);
+    }
+
+    /**
+     * Get the room bookings that owns the room.
+     *
+     * @return hasMany
+     */
+    public function Bookings(): BelongsToMany
+    {
+        return $this->belongsToMany(Booking::class);
+    }
 }
