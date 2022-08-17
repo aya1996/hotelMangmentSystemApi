@@ -3,10 +3,42 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GuestRequest;
+use App\Http\Resources\GuestResource;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class GuestController extends Controller
 {
+    public function login(Request $request)
+    {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (!Auth::attempt($request->only('email', 'password'))) {
+                return $this->handleError('Invalid credentials');
+            }
+
+            $guest = User::where('email', $request['email'])->firstOrFail();
+
+
+            return $this->handleResponse(new GuestResource($guest), 'Login Successful');
+        }
+    }
+
+    public function register(GuestRequest $request)
+    {
+        $guest = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'is_admin' => $request->is_admin,
+
+        ]);
+        $guest->save();
+        return $this->handleResponse(new GuestResource($guest), 'guest created successfully', Response::HTTP_CREATED);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,19 +46,10 @@ class GuestController extends Controller
      */
     public function index()
     {
-        //
+        return $this->handleResponse(User::all(), 'List of guests');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+
 
     /**
      * Display the specified resource.
@@ -36,7 +59,11 @@ class GuestController extends Controller
      */
     public function show($id)
     {
-        //
+        $guest = User::find($id);
+        if (!$guest) {
+            return $this->handleError(null, 'Guest not found', Response::HTTP_NOT_FOUND);
+        }
+        return $this->handleResponse($guest, 'Guest found successfully');
     }
 
     /**
@@ -48,7 +75,12 @@ class GuestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $guest = User::find($id);
+        if (!$guest) {
+            return $this->handleError(null, 'Guest not found', Response::HTTP_NOT_FOUND);
+        }
+        $guest->update($request->only('name', 'email', 'phone_No', 'address'));
+        return $this->handleResponse($guest, 'Guest updated successfully');
     }
 
     /**
@@ -59,6 +91,11 @@ class GuestController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $guest = User::find($id);
+        if (!$guest) {
+            return $this->handleError(null, 'Guest not found', Response::HTTP_NOT_FOUND);
+        }
+        $guest->delete();
+        return $this->handleResponse(null, 'Guest deleted successfully');
     }
 }

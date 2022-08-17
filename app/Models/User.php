@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -41,4 +42,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the rooms that owns the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Room>
+     */
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    /**
+     * Get the bookings that owns the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Booking>
+     */
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+
+
+    
 }

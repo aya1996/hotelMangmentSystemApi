@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class RoomTypeResource extends JsonResource
+class GuestResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,10 +14,14 @@ class RoomTypeResource extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'created_at' => $this->created_at->format('Y-m-d'),
+            'email' => $this->email,
+            'is_admin' => $this->is_admin,
+            'token' => $this->createToken('Laravel Password Grant Client')->plainTextToken,
+            'created_at' => $this->created_at->format('Y-m-d '),
         ];
     }
 }

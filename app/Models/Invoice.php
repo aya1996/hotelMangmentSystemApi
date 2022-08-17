@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Image extends Model
+class Invoice extends Model
 {
     use HasFactory;
 
@@ -15,19 +15,17 @@ class Image extends Model
      *
      * @var array
      */
-    protected $fillable = ['image_path', 'room_id'];
-
+    protected $guarded = [];
 
 
     /**
-     * Get the room that owns the image.
+     * Get the room that owns the room booking.
      *
      * @return BelongsTo
      */
-    public function room(): BelongsTo
+    public function booking(): BelongsTo
     {
-        return $this->belongsTo(Room::class);
-    }
-   
 
+        return $this->BelongsTo(Booking::class);
+    }
 }

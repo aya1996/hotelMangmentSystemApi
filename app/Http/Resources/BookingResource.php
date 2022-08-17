@@ -23,8 +23,10 @@ class BookingResource extends JsonResource
             'check_in_date' => $this->check_in_date,
             'check_out_date' => $this->check_out_date,
             'booking_date' => $this->booking_date,
-            'payment_status' => $this->payment_status,
+            'hour_booking' => $this->hour_booking,
+            'day_booking' => $this->day_booking,
             'rooms' => $this->rooms()->get(),
+            'guest' => $this->guest()->get(),
             'created_at' => $this->created_at->format('Y-m-d'),
 
         ];

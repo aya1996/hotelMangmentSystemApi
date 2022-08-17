@@ -43,7 +43,7 @@ class AdminController extends Controller
         }
     }
 
-    public function register(Request $request, UserRequest $attr)
+    public function register(UserRequest $attr)
     {
 
         $user = User::create([

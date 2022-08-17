@@ -22,7 +22,10 @@ return new class extends Migration
             $table->date('check_in_date');
             $table->date('check_out_date');
             $table->date('booking_date');
-            $table->boolean('payment_status')->default(false);
+            $table->boolean('hour_booking')->default(false);
+            $table->boolean('day_booking')->default(false);
+            $table->unsignedBigInteger('guest_id'); //foreign key
+            $table->foreign('guest_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

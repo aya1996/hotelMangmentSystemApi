@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use phpDocumentor\Reflection\PseudoTypes\True_;
 
-class FacilityRequest extends FormRequest
+class GuestRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +14,7 @@ class FacilityRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,8 +26,10 @@ class FacilityRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'details' => 'required|string|max:255',
-    
+            'email' => 'required|string|email|max:255|unique:guests',
+            'password' => 'required|string|min:6|confirmed',
+            'is_admin' => 'sometimes|boolean',
+
         ];
     }
 }

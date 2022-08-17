@@ -14,6 +14,6 @@ class FacilitySeeder extends Seeder
      */
     public function run()
     {
-        $this->call(FacilitySeederFactory::class);
+        $this->call(FacilityFactory::class);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FacilityRequest extends FormRequest
+class InvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class FacilityRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,9 +24,13 @@ class FacilityRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'details' => 'required|string|max:255',
-    
+            'booking_id' => 'required|integer|exists:bookings,id',
+            'hours_duration' => 'integer | sometimes',
+            'days_duration' => 'integer | sometimes',
+            'discount' => 'integer',
+            'guest_id' => 'required|integer|exists:guests,id',
+            'invoiceDate' => 'date | date_format:Y-m-d',
+
         ];
     }
 }
