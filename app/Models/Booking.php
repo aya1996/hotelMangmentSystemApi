@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -74,20 +75,10 @@ class Booking extends Model
 
 
 
-    // public function isBookedScope($query, $roomId)
-    // {
-    //     return Booking::where('room_id', $request->roomId)
-    //     ->whereDate('start_datetime', '<=', $startDateTime)
-    //     ->whereDate('end_datetime', '>=', $endDateTime )
-    //     ->exists()
-
-    // }
-
-    public function isBookedScope($query, $roomId)
+    public function scopeAvailableDays($query)
     {
-        return $query->where('room_id', $roomId)
-            ->whereDate('start_datetime', '<=', $this->check_in_date)
-            ->whereDate('end_datetime', '>=', $this->check_out_date)
-            ->exists();
+        return $query->whereMonth('check_in_date', Carbon::now()->month)
+            ->whereMonth('check_out_date', Carbon::now()->month)
+            ->get(['check_in_date', 'check_out_date']);
     }
 }
