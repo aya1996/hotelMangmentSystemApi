@@ -31,11 +31,11 @@ class BookingRequest extends FormRequest
             'check_in_date' => 'required|date',
             'check_out_date' => 'required|date',
             'booking_date' => 'required|date',
-            'hour_booking' => 'sometimes|boolean',
-            'day_booking' => 'sometimes|boolean',
+            'hour_booking' => 'sometimes|boolean|required_if:day_booking,0',
+            'day_booking' => 'sometimes|boolean|required_if:hour_booking,0',
             'room_id' => 'required|array',
             'room_id.*' => 'required|integer|exists:rooms,id',
-            'guest_id' => 'required|integer|exists:guests,id',
+            'guest_id' => 'required|integer|exists:users,id',
 
 
         ];

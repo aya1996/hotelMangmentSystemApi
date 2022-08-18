@@ -20,6 +20,7 @@ class AdminController extends Controller
      */
     public function index()
     {
+        return $this->handleResponse(User::all()->where('is_admin', true), 'List of admins');
     }
 
     /**
@@ -50,6 +51,7 @@ class AdminController extends Controller
             'name'      => $attr['name'],
             'email'     => $attr['email'],
             'password'  => Hash::make($attr['password']),
+            'is_admin'  => true,
         ]);
         $token = $user->createToken('Laravel Password Grant Client')->plainTextToken;
 
@@ -63,7 +65,11 @@ class AdminController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::find($id)->where('is_admin', true);
+        if (!$user) {
+            return $this->handleError('user not found');
+        }
+        return $this->handleResponse(new UserResource($user), 'user found');
     }
 
     /**
@@ -75,7 +81,12 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        if (!$user) {
+            return $this->handleError('user not found');
+        }
+        $user->update($request->all());
+        return $this->handleResponse(new UserResource($user), 'user updated successfully');
     }
 
     /**
@@ -86,6 +97,12 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
+        $user = User::find($id)->where('is_admin', true);
+        if (!$user) {
+            return $this->handleError('user not found');
+        }
+        $user->delete();
+        return $this->handleResponse(new UserResource($user), 'user deleted successfully');
     }
 
     public function logout(Request $request)

@@ -32,6 +32,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('guest/Auth')->group(function () {
     Route::post('/register', [GuestController::class, 'register']);
     Route::post('/login', [GuestController::class, 'login']);
+    Route::post('/login', [GuestController::class, 'login']);
+    Route::get('/logout', [GuestController::class, 'logout']);
+    Route::get('/guests', [GuestController::class, 'index']);
 });
 
 Route::prefix('admin/Auth')->group(function () {
@@ -40,7 +43,8 @@ Route::prefix('admin/Auth')->group(function () {
     Route::post('/logout', [AdminController::class, 'logout']);
 });
 Route::middleware('auth:sanctum')->group(function () {
-    Route::resource('bookings', BookingController::class);
+    Route::resource('bookings', BookingController::class);;
+    Route::get('booking/available-dates', [BookingController::class, 'availableDates']);
 });
 
 Route::resource('rooms', RoomController::class);

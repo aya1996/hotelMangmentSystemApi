@@ -9,13 +9,15 @@ use App\Models\Booking;
 use App\Models\Guest;
 use App\Models\Room;
 use App\Models\Transaction;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 
 class BookingController extends Controller
 {
-  
+
 
     /**
      * Display a listing of the resource.
@@ -41,25 +43,41 @@ class BookingController extends Controller
             if (!$room) {
                 return $this->handleError(null, 'Room not found', Response::HTTP_NOT_FOUND);
             }
-                         
-            $isBooked = Booking::whereDate('check_in_date', '<=', $request->check_in_date)      
-                ->whereDate('check_out_date', '>=', $request->check_out_date)
-                ->exists();
-
-            if ($isBooked) {
-                return $this->handleError(null, 'Room not available in these dates', Response::HTTP_NOT_FOUND);
+            $bookings = Booking::where('check_in_date', '<=', $request->check_in_date)->where('check_out_date', '>=', $request->check_in_date)->get();
+            foreach ($bookings as $booking) {
+                $checkInDate = $booking->check_in_date;
+                $checkOutDate = $booking->check_out_date;
+                $isBooked = CarbonPeriod::create($checkInDate, $checkOutDate);
+                if ($isBooked) {
+                    return $this->handleError(null, 'Room not available in these dates', Response::HTTP_NOT_FOUND);
+                }
             }
+
             if ($room->availability == 0) {
                 return $this->handleError(null, 'this room is not available', Response::HTTP_BAD_REQUEST);
             }
+            $rooms[] = $room;
         }
-        $rooms[] = $room;
-        $booking = Booking::create($request->only('name', 'email', 'phone_No', 'address', 'check_in_date', 'check_out_date', 'hour_booking', 'day_booking', 'booking_date', 'guest_id'));
+
+        $booking = Booking::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone_No' => $request->phone_No,
+            'check_in_date' => $request->check_in_date,
+            'check_out_date' => $request->check_out_date,
+            'address' => $request->address,
+            'booking_date' => $request->booking_date,
+            'hour_booking' => $request->hour_booking,
+            'day_booking' => $request->day_booking,
+            'guest_id' => auth()->user()->id,
+        ]);
 
         $booking->save();
         $booking->rooms()->attach($request->room_id);
-        Room::where('id', $room->id)->update(['availability' => 0]);
-
+        foreach ($rooms as $room) {
+            $room->availability = 0;
+            $room->save();
+        }
         return $this->handleResponse(new BookingResource($booking), 'Your booking is successfully created', Response::HTTP_CREATED);
     }
 
@@ -128,12 +146,52 @@ class BookingController extends Controller
 
     public function  availableDates()
     {
+        // $bookings = Booking::all();
+        // $dates = [];
+        // foreach ($bookings as $booking) {
+        //     $checkInDate = $booking->check_in_date;
+        //     $checkOutDate = $booking->check_out_date;
+        //     // $start = Carbon::parse($checkInDate)->startOfMonth();
+        //     // $end = Carbon::parse($checkOutDate)->endOfMonth();
+
+        //     // $dates = [];
+        //     // while ($start->lte($end)) {
+        //     //     $dates[] = $start->copy()-> ->format('Y-m-d');
+        //     //     $start->addDay();
+        //     // }
+        //     // $availableDates[] = [
+        //     //     Carbon::parse($booking->check_in_date)->daysInMonth
+
+        //     // ];
+
+        //     $start = Carbon::parse($checkInDate)->startOfMonth();
+        //     $end = Carbon::parse($checkOutDate)->endOfMonth();
+        //     $period = CarbonPeriod::create($start, $end);
+
+        //     foreach ($period as $date) {
+
+        //         $dates[] =  $date->format('Y-m-d');
+        //     }
+        // }
         $bookings = Booking::all();
-        $dates = [];
+        
         foreach ($bookings as $booking) {
-            $dates[] = $booking->check_in_date;
-            $dates[] = $booking->check_out_date;
+            $checkInDate = $booking->check_in_date;
+            $checkOutDate = $booking->check_out_date;
+            $start = Carbon::parse($checkInDate)->startOfMonth();
+            $end = Carbon::parse($checkInDate)->endOfMonth();
+            // return $checkInDate;
+            $period = CarbonPeriod::between($start,$end);
+            $days = [];
+            foreach ($period as $date) {
+                $day = $date->format('Y-m-d');
+                $days[] = $day;
+                if ($day === $checkInDate  || $day === $checkOutDate) {
+                    $period->skip($date);
+                }
+            }
+            
         }
-        return $this->handleResponse($dates, Response::HTTP_OK);
+        return $this->handleResponse($days, Response::HTTP_OK);
     }
 }

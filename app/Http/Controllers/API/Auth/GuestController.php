@@ -33,7 +33,7 @@ class GuestController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_admin' => $request->is_admin,
+            'is_admin' => false,
 
         ]);
         $guest->save();
@@ -46,10 +46,10 @@ class GuestController extends Controller
      */
     public function index()
     {
-        return $this->handleResponse(User::all(), 'List of guests');
+        return $this->handleResponse(User::all()->where('is_admin', false), 'List of guests');
     }
 
-
+   
 
     /**
      * Display the specified resource.
@@ -59,7 +59,7 @@ class GuestController extends Controller
      */
     public function show($id)
     {
-        $guest = User::find($id);
+        $guest = User::find($id)->where('is_admin', false);
         if (!$guest) {
             return $this->handleError(null, 'Guest not found', Response::HTTP_NOT_FOUND);
         }
@@ -75,7 +75,7 @@ class GuestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $guest = User::find($id);
+        $guest = User::find($id)->where('is_admin', false);
         if (!$guest) {
             return $this->handleError(null, 'Guest not found', Response::HTTP_NOT_FOUND);
         }
@@ -91,11 +91,18 @@ class GuestController extends Controller
      */
     public function destroy($id)
     {
-        $guest = User::find($id);
+        $guest = User::find($id)->where('is_admin', false);
         if (!$guest) {
             return $this->handleError(null, 'Guest not found', Response::HTTP_NOT_FOUND);
         }
         $guest->delete();
         return $this->handleResponse(null, 'Guest deleted successfully');
+    }
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
     }
 }

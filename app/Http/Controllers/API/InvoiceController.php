@@ -33,8 +33,8 @@ class InvoiceController extends Controller
     {
         $booking = Booking::find($request->booking_id);
         $total = 0;
-        
-      
+
+
         if ($booking->hour_booking == true) {
             $booking->rooms->each(function ($room) use (&$total) {
                 $total += $room->price_per_hour;
@@ -59,7 +59,7 @@ class InvoiceController extends Controller
         $invoice = Invoice::create([
             'invoice_number' => uniqid(),
             'total_amount' => $total,
-            'guest_id' => $request->guest_id,
+            'guest_id' => auth()->user()->id,
             'sub_total' => $sub_total,
             'discount' =>  $discount,
             'invoiceDate' => request('invoiceDate'),
