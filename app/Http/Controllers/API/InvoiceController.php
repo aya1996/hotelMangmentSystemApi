@@ -35,14 +35,13 @@ class InvoiceController extends Controller
         $total = 0;
 
 
-        if ($booking->hour_booking == true) {
+        if ($booking->booking_type == false) {
             $booking->rooms->each(function ($room) use (&$total) {
                 $total += $room->price_per_hour;
             });
             // return $total;
             // $total += $booking->rooms()  * $request->hours_duration;
-        }
-        if ($booking->day_booking == true) {
+        } else {
 
             $booking->rooms->each(function ($room) use (&$total) {
                 $total += $room->price_per_day;

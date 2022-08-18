@@ -81,4 +81,18 @@ class Booking extends Model
             ->whereMonth('check_out_date', Carbon::now()->month)
             ->get(['check_in_date', 'check_out_date']);
     }
+
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', '%' . $search . '%')
+            ->orWhere('name->ar', 'like', '%' . $search . '%')
+            ->orWhere('check_in_date', 'like', '%' . $search . '%')
+            ->orWhere('check_out_date', 'like', '%' . $search . '%')
+            ->orWhere('booking_date', 'like', '%' . $search . '%')
+            ->orWhere('booking_type', 'like', '%' . $search . '%')
+            ->orWhere('guest_id', 'like', '%' . $search . '%')
+            ->orWhere('room_id', 'like', '%' . $search . '%')
+            ->orWhere('booking_type', 'like', '%' . $search . '%');
+    }
 }

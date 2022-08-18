@@ -22,8 +22,7 @@ return new class extends Migration
             $table->date('check_in_date');
             $table->date('check_out_date');
             $table->date('booking_date');
-            $table->boolean('hour_booking')->default(false);
-            $table->boolean('day_booking')->default(false);
+            $table->boolean('booking_type')->default(false); // false for hour, true for day
             $table->string('status')->default('pending');
             $table->unsignedBigInteger('guest_id'); //foreign key
             $table->foreign('guest_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

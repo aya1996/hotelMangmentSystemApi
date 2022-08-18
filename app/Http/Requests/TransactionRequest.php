@@ -13,7 +13,7 @@ class TransactionRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class TransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'payment_method' => 'required | string | max:255',
+            'payment_status' => 'required | string | max:255',
+            'payment_amount' => 'required | integer',
+            'payment_currency' => 'required | string | max:255',
+            'payment_date' => 'required | date | date_format:Y-m-d',
+            'is_refund' => 'required | boolean',
         ];
     }
 }

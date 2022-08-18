@@ -28,7 +28,7 @@ class InvoiceRequest extends FormRequest
             'hours_duration' => 'integer | sometimes',
             'days_duration' => 'integer | sometimes',
             'discount' => 'integer',
-            'guest_id' => 'required|integer|exists:guests,id',
+            'guest_id' => 'required|integer|exists:users,id',
             'invoiceDate' => 'date | date_format:Y-m-d',
 
         ];

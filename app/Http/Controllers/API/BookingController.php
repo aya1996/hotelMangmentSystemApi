@@ -13,7 +13,14 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Arr;
+use Illuminate\Pipeline\Pipeline;
+use Baro\PipelineQueryCollection\BooleanFilter;
+use Baro\PipelineQueryCollection\DateFromFilter;
+use Baro\PipelineQueryCollection\DateToFilter;
+use Baro\PipelineQueryCollection\RelationFilter;
+use Baro\PipelineQueryCollection\RelativeFilter;
+use Baro\PipelineQueryCollection\ScopeFilter;
+
 
 class BookingController extends Controller
 {
@@ -26,7 +33,21 @@ class BookingController extends Controller
      */
     public function index()
     {
-        return $this->handleResponse(BookingResource::collection(Booking::all()), 'List of bookings');
+        return $bookings = app(Pipeline::class)
+        ->send(Booking::query())
+        ->through([
+            new ScopeFilter('search'),
+            new RelativeFilter('name'),
+            new BooleanFilter('booking_type'),
+            new RelativeFilter('booking_date'),
+            new DateFromFilter('check_in_date'),
+            new DateToFilter('check_out_date'),
+            new RelationFilter('guest_id', 'id'),
+            new RelationFilter('room_id', 'id'),
+
+        ])->thenReturn()
+        ->paginate(10);
+
     }
 
     /**
