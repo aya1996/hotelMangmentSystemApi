@@ -14,6 +14,6 @@ class ImageSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(ImageSeederFactory::class);
+        $this->call(ImageSeeder::class);
     }
 }

@@ -7,6 +7,11 @@ use App\Http\Requests\InvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Booking;
 use App\Models\Invoice;
+use Baro\PipelineQueryCollection\DateFromFilter;
+use Baro\PipelineQueryCollection\DateToFilter;
+use Baro\PipelineQueryCollection\RelationFilter;
+use Baro\PipelineQueryCollection\RelativeFilter;
+use Baro\PipelineQueryCollection\ScopeFilter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -19,8 +24,19 @@ class InvoiceController extends Controller
      */
     public function index()
     {
+        return $bookings = app(Pipeline::class)
+        ->send(Invoice::query())
+        ->through([
+            new ScopeFilter('search'),
+            new RelativeFilter('invoice_number'),
 
-        return $this->handleResponse(InvoiceResource::collection(Invoice::all()), 'List of Invoices');
+            new RelativeFilter('booking_date'),
+            new DateFromFilter('invoiceDate'),
+            new DateToFilter('invoiceDate'),
+            new RelationFilter('guest_id', 'id'),
+
+        ])->thenReturn()
+        ->paginate(10);
     }
 
     /**

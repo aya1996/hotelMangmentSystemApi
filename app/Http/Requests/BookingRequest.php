@@ -35,7 +35,7 @@ class BookingRequest extends FormRequest
             'day_booking' => 'sometimes|boolean|required_if:hour_booking,0',
             'room_id' => 'required|array',
             'room_id.*' => 'required|integer|exists:rooms,id',
-            'guest_id' => 'required|integer|exists:users,id',
+            'guest_id' => 'integer|exists:users,id',
 
 
         ];

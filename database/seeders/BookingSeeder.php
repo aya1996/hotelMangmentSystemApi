@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Database\Factories\RoomFactory;
+use Database\Factories\BookingFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RoomSeeder extends Seeder
+class BookingSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +15,6 @@ class RoomSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(RoomFactory::class);
+        $this->call(BookingFactory::class);
     }
 }

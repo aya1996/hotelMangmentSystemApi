@@ -8,6 +8,10 @@ use App\Http\Resources\RoomResource;
 use App\Models\Image;
 use App\Models\Room;
 use App\Traits\ImageTrait;
+use Baro\PipelineQueryCollection\BooleanFilter;
+use Baro\PipelineQueryCollection\RelationFilter;
+use Baro\PipelineQueryCollection\RelativeFilter;
+use Baro\PipelineQueryCollection\ScopeFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,9 +25,23 @@ class RoomController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {    return $bookings = app(Pipeline::class)
+        ->send(Room::query())
+        ->through([
+            new ScopeFilter('search'),
+            new RelativeFilter('room_No'),
+            new RelativeFilter('price'),
+            new RelativeFilter('capacity'),
+            new BooleanFilter('availability'),
+            new BooleanFilter('booking_type'),
+            new RelativeFilter('phone_No'),
+            new RelationFilter('room_type_id', 'id'),
+    
 
-        return  $this->handleResponse(RoomResource::collection(Room::all()), 'List of rooms');
+        ])->thenReturn()
+        ->paginate(10);
+
+      
     }
 
     /**

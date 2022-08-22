@@ -28,4 +28,18 @@ class Invoice extends Model
 
         return $this->BelongsTo(Booking::class);
     }
+
+     /**
+     * Get the room rooms .
+     *
+     * 
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->orWhere('invoice_number', 'like', '%' . $search . '%')
+            ->orWhere('guest_id', 'like', '%' . $search . '%')
+            ->orWhere('invoiceDate', 'like', '%' . $search . '%');
+           
+    }
+
 }

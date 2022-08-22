@@ -34,20 +34,19 @@ class BookingController extends Controller
     public function index()
     {
         return $bookings = app(Pipeline::class)
-        ->send(Booking::query())
-        ->through([
-            new ScopeFilter('search'),
-            new RelativeFilter('name'),
-            new BooleanFilter('booking_type'),
-            new RelativeFilter('booking_date'),
-            new DateFromFilter('check_in_date'),
-            new DateToFilter('check_out_date'),
-            new RelationFilter('guest_id', 'id'),
-            new RelationFilter('room_id', 'id'),
+            ->send(Booking::query())
+            ->through([
+                new ScopeFilter('search'),
+                new RelativeFilter('name'),
+                new BooleanFilter('booking_type'),
+                new RelativeFilter('booking_date'),
+                new DateFromFilter('check_in_date'),
+                new DateToFilter('check_out_date'),
+                new RelationFilter('guest_id', 'id'),
+                new RelationFilter('room_id', 'id'),
 
-        ])->thenReturn()
-        ->paginate(10);
-
+            ])->thenReturn()
+            ->paginate(10);
     }
 
     /**
@@ -88,8 +87,7 @@ class BookingController extends Controller
             'check_out_date' => $request->check_out_date,
             'address' => $request->address,
             'booking_date' => $request->booking_date,
-            'hour_booking' => $request->hour_booking,
-            'day_booking' => $request->day_booking,
+            'booking_type' => $request->booking_type,
             'guest_id' => auth()->user()->id,
         ]);
 
@@ -99,7 +97,7 @@ class BookingController extends Controller
             $room->availability = 0;
             $room->save();
         }
-        return $this->handleResponse(new BookingResource($booking), 'Your booking is successfully created', Response::HTTP_CREATED);
+        return $this->handleResponse(new BookingResource($booking), trans('response.your_booking_is_successfully_created'), Response::HTTP_CREATED);
     }
 
     /**
@@ -131,7 +129,8 @@ class BookingController extends Controller
             return $this->handleError(null, Response::HTTP_NOT_FOUND);
         }
         $booking->update($request->all());
-        return $this->handleResponse(new BookingResource($booking), Response::HTTP_OK);
+        $booking->rooms()->sync($request->room_id);
+        return $this->handleResponse(new BookingResource($booking), trans('response.booking_updated_successfully'), Response::HTTP_OK);
     }
 
     /**
@@ -147,7 +146,7 @@ class BookingController extends Controller
             return $this->handleError(null, Response::HTTP_NOT_FOUND);
         }
         $booking->delete();
-        return $this->handleResponse(null, Response::HTTP_OK);
+        return $this->handleResponse(null, trans('response.booking_deleted_successfully'), Response::HTTP_OK);
     }
 
     public function cancelBooking(Request $request, $id)
@@ -205,13 +204,8 @@ class BookingController extends Controller
             for ($i = 0; $i < count($DaysBooked); $i++) {
                 if ($date->format('Y-m-d') == $DaysBooked[$i]) {
                     $dates = array_diff($dates, [$date->format('Y-m-d')]);
-
-                 
                 }
-             
-                
             }
-            
         }
 
 

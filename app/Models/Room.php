@@ -84,4 +84,21 @@ class Room extends Model
     {
         return $this->belongsToMany(Booking::class);
     }
+
+    /**
+     * Get the room rooms .
+     *
+     * 
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('room_No', 'like', '%' . $search . '%')
+            ->orWhere('price', 'like', '%' . $search . '%')
+            ->orWhere('capacity', 'like', '%' . $search . '%')
+            ->orWhere('availability', 'like', '%' . $search . '%')
+            ->orWhere('booking_type', 'like', '%' . $search . '%')
+            ->orWhere('phone_No', 'like', '%' . $search . '%')
+            ->orWhere('room_type_id', 'like', '%' . $search . '%');
+         
+    }
 }
